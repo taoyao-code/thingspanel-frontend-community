@@ -50,20 +50,78 @@ const formRef = ref<FormInst>()
 const loading = ref(false)
 
 // Monaco Editor 配置
-const editorOptions = {
+const editorOptions = ref({
   automaticLayout: true,
-  theme: 'vs', // 或 'vs-dark'，根据系统主题调整？这里先用浅色/默认
+  theme: 'vs',
   language: 'lua',
   fontSize: 14,
+  lineHeight: 20,
   fontFamily: 'Consolas, "Courier New", monospace',
   wordWrap: 'on',
   lineNumbers: 'on',
+  glyphMargin: true,
+  folding: true,
+  lineDecorationsWidth: 10,
+  lineNumbersMinChars: 3,
   minimap: {
-    enabled: true
+    enabled: true,
+    side: 'right',
+    size: 'proportional',
+    showSlider: 'mouseover'
   },
   scrollBeyondLastLine: false,
+  readOnly: false,
+  cursorStyle: 'line',
+  cursorBlinking: 'blink',
+  renderWhitespace: 'selection',
+  renderControlCharacters: false,
+  fontLigatures: true,
+  suggestOnTriggerCharacters: true,
+  acceptSuggestionOnEnter: 'on',
+  tabCompletion: 'on',
+  wordBasedSuggestions: true,
+  parameterHints: {
+    enabled: true
+  },
+  quickSuggestions: {
+    other: true,
+    comments: false,
+    strings: false
+  },
+  bracketPairColorization: {
+    enabled: true
+  },
+  guides: {
+    bracketPairs: true,
+    indentation: true
+  },
   formatOnPaste: true,
   formatOnType: true
+})
+
+// 编辑器实例引用
+const editorRef = ref()
+
+// 编辑器工具栏功能
+const formatCode = () => {
+  if (editorRef.value) {
+    editorRef.value.getAction('editor.action.formatDocument').run()
+  }
+}
+
+const toggleMinimap = () => {
+  editorOptions.value.minimap.enabled = !editorOptions.value.minimap.enabled
+}
+
+const toggleWordWrap = () => {
+  editorOptions.value.wordWrap = editorOptions.value.wordWrap === 'on' ? 'off' : 'on'
+}
+
+const changeFontSize = (delta: number) => {
+  const newSize = editorOptions.value.fontSize + delta
+  if (newSize >= 10 && newSize <= 24) {
+    editorOptions.value.fontSize = newSize
+  }
 }
 
 interface FormModel {
@@ -186,9 +244,71 @@ watch(
               :placeholder="$t('common.inputPlaceholder')" />
           </NFormItemGridItem>
           <NFormItemGridItem :span="24" :label="$t('dataForwarding.scriptContent')" path="script_content">
-            <div class="h-300px w-full border border-gray-200 rounded-4px overflow-hidden">
-              <MonacoEditor v-model:value="formModel.script_content" :options="editorOptions" language="lua"
-                height="300" />
+            <div class="editor-container">
+              <!-- 编辑器工具栏 -->
+              <div class="editor-toolbar">
+                <div class="toolbar-left">
+                  <NButton size="small" tertiary @click="formatCode">
+                    <template #icon>
+                      <n-icon>
+                        <svg viewBox="0 0 24 24">
+                          <path fill="currentColor"
+                            d="M9.5 15.5L4.5 10.5L9.5 5.5L8.09 4.09L1.5 10.68L8.09 17.27L9.5 15.5ZM14.5 8.5L19.5 13.5L14.5 18.5L15.91 19.91L22.5 13.32L15.91 6.73L14.5 8.5Z" />
+                        </svg>
+                      </n-icon>
+                    </template>
+                    格式化
+                  </NButton>
+                  <NButton size="small" tertiary @click="toggleWordWrap">
+                    <template #icon>
+                      <n-icon>
+                        <svg viewBox="0 0 24 24">
+                          <path fill="currentColor"
+                            d="M4 19h6v-2H4v2zM20 5H4v2h16V5zm-3 6H4v2h13.25c1.1 0 2 .9 2 2s-.9 2-2 2H15v-2l-3 3l3 3v-2h2.25c2.3 0 4.25-2.05 4.25-4.5S19.55 11 17.25 11z" />
+                        </svg>
+                      </n-icon>
+                    </template>
+                    自动换行
+                  </NButton>
+                  <NButton size="small" tertiary @click="toggleMinimap">
+                    <template #icon>
+                      <n-icon>
+                        <svg viewBox="0 0 24 24">
+                          <path fill="currentColor"
+                            d="M3 3h18v18H3V3zm16 16V5H5v14h14zM7 7h2v2H7V7zm0 4h2v2H7v-2zm0 4h2v2H7v-2zm4-8h6v2h-6V7zm0 4h6v2h-6v-2zm0 4h6v2h-6v-2z" />
+                        </svg>
+                      </n-icon>
+                    </template>
+                    小地图
+                  </NButton>
+                </div>
+                <div class="toolbar-right">
+                  <NButton size="small" tertiary @click="changeFontSize(-1)">
+                    <template #icon>
+                      <n-icon>
+                        <svg viewBox="0 0 24 24">
+                          <path fill="currentColor" d="M19 13H5v-2h14v2z" />
+                        </svg>
+                      </n-icon>
+                    </template>
+                  </NButton>
+                  <span class="font-size-display">{{ editorOptions.fontSize }}px</span>
+                  <NButton size="small" tertiary @click="changeFontSize(1)">
+                    <template #icon>
+                      <n-icon>
+                        <svg viewBox="0 0 24 24">
+                          <path fill="currentColor" d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+                        </svg>
+                      </n-icon>
+                    </template>
+                  </NButton>
+                </div>
+              </div>
+              <!-- Monaco Editor -->
+              <div class="editor-wrapper">
+                <MonacoEditor ref="editorRef" v-model:value="formModel.script_content" :options="editorOptions"
+                  language="lua" height="300" class="custom-monaco-editor" />
+              </div>
             </div>
           </NFormItemGridItem>
         </NGrid>
@@ -214,4 +334,79 @@ watch(
   </NModal>
 </template>
 
-<style scoped></style>
+<style scoped>
+/* 编辑器容器样式 */
+.editor-container {
+  width: 100%;
+  border: 1px solid #e0e0e6;
+  border-radius: 6px;
+  overflow: hidden;
+  background: #fff;
+}
+
+.editor-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  background: #f8f9fa;
+  border-bottom: 1px solid #e0e0e6;
+  min-height: 40px;
+}
+
+.toolbar-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.font-size-display {
+  font-size: 12px;
+  color: #666;
+  min-width: 35px;
+  text-align: center;
+}
+
+.editor-wrapper {
+  position: relative;
+  background: #fff;
+  width: 100%;
+}
+
+.custom-monaco-editor {
+  border: none !important;
+  width: 100% !important;
+}
+
+/* 编辑器工具栏按钮样式优化 */
+.editor-toolbar .n-button {
+  height: 28px;
+  padding: 0 8px;
+  font-size: 12px;
+}
+
+.editor-toolbar .n-button .n-icon {
+  font-size: 14px;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .editor-toolbar {
+    flex-direction: column;
+    gap: 8px;
+    padding: 12px;
+  }
+
+  .toolbar-left,
+  .toolbar-right {
+    width: 100%;
+    justify-content: center;
+  }
+}
+</style>
