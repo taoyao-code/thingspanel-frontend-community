@@ -23,6 +23,7 @@ function getLangMessages(modules: Record<string, any>, lang: 'zh-cn' | 'en-us') 
         'buttons',
         'custom',
         'dashboard_panel',
+        'dataForwarding',
         'dropdown',
         'form',
         'generate',

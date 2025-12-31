@@ -331,5 +331,11 @@
   "common.thingModel": "Thing Model",
   "common.viewCard": "Card View",
   "common.viewList": "List View",
-  "common.viewMap": "Map View"
+  "common.viewMap": "Map View",
+  "common.enable": "Enable",
+  "common.disable": "Disable",
+  "common.all": "All",
+  "common.inputPlaceholder": "Please enter",
+  "common.close": "Close",
+  "common.seconds": "seconds"
 }

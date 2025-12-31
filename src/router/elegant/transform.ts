@@ -191,6 +191,8 @@ const routeMap: RouteMap = {
   "dashboard_panel": "/dashboard/panel",
   "dashboard_workbench": "/dashboard/workbench",
   "data-service": "/data-service",
+  "data-service_data-forward": "/data-service/data-forward",
+  "data-service_forward-config": "/data-service/forward-config",
   "data-service_rule-engine": "/data-service/rule-engine",
   "device": "/device",
   "device_config": "/device/config",

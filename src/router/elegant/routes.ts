@@ -256,6 +256,24 @@ export const generatedRoutes: GeneratedRoute[] = [
     },
     children: [
       {
+        name: 'data-service_data-forward',
+        path: '/data-service/data-forward',
+        component: 'view.data-service_data-forward',
+        meta: {
+          title: 'data-service_data-forward',
+          i18nKey: 'route.data-service_data-forward'
+        }
+      },
+      {
+        name: 'data-service_forward-config',
+        path: '/data-service/forward-config',
+        component: 'view.data-service_forward-config',
+        meta: {
+          title: 'data-service_forward-config',
+          i18nKey: 'route.data-service_forward-config'
+        }
+      },
+      {
         name: 'data-service_rule-engine',
         path: '/data-service/rule-engine',
         component: 'view.data-service_rule-engine',

@@ -441,5 +441,11 @@
   "common.thingModel": "物模型",
   "common.viewCard": "卡片视图",
   "common.viewList": "列表视图",
-  "common.viewMap": "地图视图"
+  "common.viewMap": "地图视图",
+  "common.enable": "启用",
+  "common.disable": "禁用",
+  "common.all": "全部",
+  "common.inputPlaceholder": "请输入",
+  "common.close": "关闭",
+  "common.seconds": "秒"
 }
